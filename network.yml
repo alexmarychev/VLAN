@@ -1,0 +1,76 @@
+- name: Configure VLAN100 to Server
+  hosts: testServer1
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=server1/ifcfg-eth1.100 dest=/etc/sysconfig/network-scripts/
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network
+
+- name: Configure VLAN100 to Client
+  hosts: testClient1
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=client1/ifcfg-eth1.100 dest=/etc/sysconfig/network-scripts/
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network
+
+- name: Configure VLAN200 to Server
+  hosts: testServer2
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=server2/ifcfg-eth1.200 dest=/etc/sysconfig/network-scripts/
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network
+        
+- name: Configure VLAN200 to Client
+  hosts: testClient2
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=client2/ifcfg-eth1.200 dest=/etc/sysconfig/network-scripts/
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network
+
+- name: Configure team to centralRouter
+  hosts: centralRouter
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=centralRouter/{{item}} dest=/etc/sysconfig/network-scripts/
+      with_items:
+        - ifcfg-bond0
+        - ifcfg-eth1
+        - ifcfg-eth7
+        - route-eth5
+        - route-eth6
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network
+
+- name: Configure team to inetRouter
+  hosts: inetRouter
+  become: true
+  tasks:
+    - name: copy network-scripts config
+      copy: src=inetRouter/{{item}} dest=/etc/sysconfig/network-scripts/
+      with_items:
+        - ifcfg-bond0
+        - ifcfg-eth1
+        - ifcfg-eth2
+        - route-bond0
+    - name: Restart network
+      systemd:
+        state: restarted
+        name: network

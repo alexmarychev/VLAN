@@ -1,0 +1,5 @@
+NAME=eth7
+DEVICE=eth7
+ONBOOT=yes
+MASTER=bond0
+SLAVE=yes
